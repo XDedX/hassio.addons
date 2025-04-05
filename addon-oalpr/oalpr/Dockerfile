@@ -10,18 +10,30 @@ RUN apt-get update && \
     apt-get upgrade --yes && \
     DEBIAN_FRONTEND="noninteractive" apt-get --yes --option Dpkg::Options::="--force-confnew" --no-install-recommends install && \
     apt-get install libopencv-dev libtesseract-dev python3-pip git cmake build-essential libleptonica-dev --yes && \
-    apt-get install liblog4cplus-dev libcurl3-dev python3-numpy libopenalpr-dev openalpr --yes && \
-    pip3 install Flask requests pyopenalpr
+    apt-get install liblog4cplus-dev libcurl3-dev python3-numpy --yes && \
+    pip3 install Flask && \
+    pip3 install requests
+
+RUN cd /root && \
+    git clone https://github.com/openalpr/openalpr.git && \
+    cd openalpr/src && \
+    mkdir build && \
+    cd build && \
+    cmake -DCMAKE_INSTALL_PREFIX:PATH=/usr -DCMAKE_INSTALL_SYSCONFDIR:PATH=/etc .. && \
+    make && \
+    make install && \
+    cd /root/openalpr/src/bindings/python && \
+    python3 setup.py install && \
+    cd / && \
+    rm -rf /root/openalpr/
 
 RUN mkdir -p /root/oalpr/data && mkdir -p /root/oalpr/scripts && mkdir -p /root/oalpr/log
 
-# Добавляем поддержку ua на основе eu
+# Добавляем поддержку ua
 RUN mkdir -p /usr/share/openalpr/runtime_data/config && \
     mkdir -p /usr/share/openalpr/runtime_data/postprocess && \
-    mkdir -p /usr/share/openalpr/runtime_data/ocr && \
-    cp /usr/share/openalpr/runtime_data/config/eu.conf /usr/share/openalpr/runtime_data/config/ua.conf && \
-    echo "[A-Z]{2}[0-9]{4}[A-Z]{2}" > /usr/share/openalpr/runtime_data/postprocess/ua.patterns && \
-    cp /usr/share/openalpr/runtime_data/ocr/eu.traineddata /usr/share/openalpr/runtime_data/ocr/ua.traineddata
+    echo "country = ua" > /usr/share/openalpr/runtime_data/config/ua.conf && \
+    echo "[0-9A-Za-z]{2}[0-9]{4}[A-Za-z]{2}" > /usr/share/openalpr/runtime_data/postprocess/ua.patterns
 
 COPY ./oalpr.py /root/oalpr/scripts
 COPY rootfs /
