@@ -33,8 +33,10 @@ RUN mkdir -p /root/oalpr/data && mkdir -p /root/oalpr/scripts && mkdir -p /root/
 # Добавляем поддержку ua
 RUN mkdir -p /usr/share/openalpr/runtime_data/config && \
     mkdir -p /usr/share/openalpr/runtime_data/postprocess && \
-    echo "country = ua" > /usr/share/openalpr/runtime_data/config/ua.conf && \
-    echo "[0-9A-Za-z]{2}[0-9]{4}[A-Za-z]{2}" > /usr/share/openalpr/runtime_data/postprocess/ua.patterns
+    mkdir -p /usr/share/openalpr/runtime_data/ocr && \
+    cp /usr/share/openalpr/runtime_data/config/eu.conf /usr/share/openalpr/runtime_data/config/ua.conf && \
+    echo "[A-Z]{2}[0-9]{4}[A-Z]{2}" > /usr/share/openalpr/runtime_data/postprocess/ua.patterns && \
+    cp /usr/share/openalpr/runtime_data/ocr/eu.traineddata /usr/share/openalpr/runtime_data/ocr/ua.traineddata
     
 COPY ./oalpr.py /root/oalpr/scripts
 COPY rootfs /
