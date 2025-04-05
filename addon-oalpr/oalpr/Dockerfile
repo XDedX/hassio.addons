@@ -30,6 +30,9 @@ RUN cd /root && \
 
 RUN mkdir -p /root/oalpr/data && mkdir -p /root/oalpr/scripts && mkdir -p /root/oalpr/log
 
+# Копируем runtime_data из проекта
+COPY runtime_data/ /usr/share/openalpr/runtime_data/
+
 # Добавляем поддержку ua на основе eu
 RUN mkdir -p /usr/share/openalpr/runtime_data/config && \
     mkdir -p /usr/share/openalpr/runtime_data/postprocess && \
