@@ -30,6 +30,12 @@ RUN cd /root && \
 
 RUN mkdir -p /root/oalpr/data && mkdir -p /root/oalpr/scripts && mkdir -p /root/oalpr/log
 
+# Добавляем поддержку ua
+RUN mkdir -p /usr/share/openalpr/runtime_data/config && \
+    mkdir -p /usr/share/openalpr/runtime_data/postprocess && \
+    echo "country = ua" > /usr/share/openalpr/runtime_data/config/ua.conf && \
+    echo "[0-9A-Za-z]{2}[0-9]{4}[A-Za-z]{2}" > /usr/share/openalpr/runtime_data/postprocess/ua.patterns
+    
 COPY ./oalpr.py /root/oalpr/scripts
 COPY rootfs /
 
